@@ -8,11 +8,11 @@ let winner
 let tie 
 /*------------------------ Cached Element References ------------------------*/
 const messageEl = document.querySelector('#message') 
-// console.log(messageEl)
+const resetBtnEl = document.querySelector('#reset');
 /*-------------------------------- Functions --------------------------------*/
 const init = () => {
   // console.log('init')
-  board = ['X' , 'O' , '' , '' , '', '' , '' , '' , '']
+  board = ['' , '' , '' , '' , '', '' , '' , '' , '']
   turn = 'X'
   winner = false
   tie = false
@@ -21,7 +21,6 @@ const init = () => {
   }
 
   const render = () => {
-// updateMessage.textContent = `${messageEl}`;
 updateBoard()
 updateMessage()
   }
@@ -55,19 +54,63 @@ const winningCombos = [
   [2, 4, 6]
 ]
 
+const checkForTie = () => {
+  if (winner) {
+    return; 
+  }
+  if (!board.includes('')) {
+    tie = true;
+  }
 
-const handleClick = (event) => {
+  console.log(tie);  
+};
+
+
+const switchPlayerTurn = () => {
+  
+  if (winner) {
+    return; 
+  }
+  turn = turn === 'X' ? 'O' : 'X';
+  console.log(turn);  
+};
+
+
+
+const handleClick = (index) => {
   
   const squareIndex = parseInt(event.target.id);  
 
   if (board[squareIndex] === '' && !winner && !tie) {
     board[squareIndex] = turn;  
     render();
+    placePiece(index)
+    checkForWinner()
+    switchPlayerTurn()
+
+  }
+};
+
+const placePiece = (index) => {
+  board[index] = turn; 
+  console.log(board);
+};
+
+const checkForWinner = () => {
+  
+  for (let combo of winningCombos) {
+    const [a, b, c] = combo;
+    if (board[a] !== '' && board[a] === board[b] && board[a] === board[c]) {
+      winner = true; 
+      return; 
+    }
   }
 };
 
 /*----------------------------- Event Listeners -----------------------------*/
 document.addEventListener('DOMContentLoaded' , init)
 document.addEventListener('click' ,handleClick)
+resetBtnEl.addEventListener('click', init);
+
 
 
